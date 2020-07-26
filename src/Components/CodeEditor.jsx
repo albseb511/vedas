@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import parse from "../utils/parser";
 
 const CodeEditorWrapper = styled.div`
   padding: 20px;
@@ -59,6 +60,20 @@ const P = styled.a`
 `;
 
 const CodeEditor = ({ code }) => {
+  const [userCode, setUserCode] = useState("+(1,4)");
+  const [output, setOutput] = useState("");
+  const handleChange = e => {
+    let val = e.target.value;
+    if (val[val.length - 1] !== "\n") {
+      setUserCode(e.target.value);
+      return;
+    }
+    handleEnter();
+  };
+  const handleEnter = () => {
+    let out = parse(userCode);
+    setOutput(JSON.stringify(out));
+  };
   return (
     <CodeEditorWrapper>
       <CodeEditorHeader>
@@ -78,7 +93,10 @@ const CodeEditor = ({ code }) => {
         autoCapitalise="off"
         autoCorrect="off"
         wrap="off"
+        value={userCode}
+        onChange={handleChange}
       />
+      <div style={{ position: "absolute", bottom: 10 }}>{output}</div>
     </CodeEditorWrapper>
   );
 };
